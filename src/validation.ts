@@ -3,10 +3,6 @@ import { openapi } from "@elysiajs/openapi";
 
 const app = new Elysia()
   .use(openapi())
-  .onRequest(({ request }) => {
-    console.log(request.method, request.url)
-    console.log(new Date().toISOString())
-  })
   .post("/request",
     ({ body }) => {
       return {
@@ -22,23 +18,6 @@ const app = new Elysia()
       })
     }
   )
-
-  .get(
-    "/ping",
-    () => {
-      return {
-        success: true,
-        message: "Server OK"
-      }
-    },
-    {
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.String()
-      })
-    }
-  )
-
   .listen(3000);
 
 
