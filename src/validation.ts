@@ -4,6 +4,44 @@ import { openapi } from "@elysiajs/openapi";
 const app = new Elysia()
   .use(openapi())
 
+    app.onAfterHandle(({ response }: { response: unknown }) => {
+    return {
+      success: true,
+      Message: "data tersedia",
+      data: response
+    }
+  })
+
+.get("/product", () => {
+    return { id: 1, name: "Laptop" };
+  })
+
+  .get(
+    "/products/:id",
+    ({ params, query }) => {
+      const sort = query.sort ?? "asc";
+      return {
+        productId: params.id,
+        sort,
+        message: `Product ${params.id} sorted ${sort}`
+      };
+    },
+    {
+      params: t.Object({
+        id: t.Numeric()
+      }),
+      query: t.Object({
+        sort: t.Optional(
+          t.Union([
+            t.Literal("asc"),
+            t.Literal("desc")
+          ])
+        )
+      })
+      // response: t.Object(...) dihapus agar tidak bentrok dengan wrapper onAfterHandle
+    }
+  )
+
   .post("/request",
     ({ body }) => ({
       message: "Success",
