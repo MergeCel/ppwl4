@@ -12,6 +12,28 @@ const app = new Elysia()
     }
   })
 
+      app.onError(({ code, error, set }) => {
+    if (code === "VALIDATION") {
+      set.status = 400
+      return {
+        success: false,
+        error: "Validation Error", 
+      }
+    }
+
+    if (code === "NOT_FOUND") {
+      set.status = 404
+      return {
+        message: "Route not found"
+      }
+    }
+
+    set.status = 500
+    return {
+      message: "Internal Server Error"
+    }
+  })
+
 .get("/product", () => {
     return { id: 1, name: "Laptop" };
   })
@@ -38,7 +60,17 @@ const app = new Elysia()
           ])
         )
       })
-      // response: t.Object(...) dihapus agar tidak bentrok dengan wrapper onAfterHandle
+    }
+  )
+
+  app.post(
+    "/login",
+    ({ body }) => body,
+    {
+      body: t.Object({
+        email: t.String({ format: "email" }),
+        password: t.String({ minLength: 8 }) 
+      })
     }
   )
 
